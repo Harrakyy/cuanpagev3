@@ -26,17 +26,24 @@ export default function AdminDetailPesananPage() {
   });
 
   const convertMutation = useMutation({
-    mutationFn: () =>
-      postData(`/api/admin/orders/${params.id}/convert`, {
+    mutationFn: () => {
+      const payload = {
         agreed_price: Number(price),
         agreed_duration: duration ? Number(duration) : undefined,
         admin_notes: notes || undefined,
-      }),
+      };
+      console.log("convert payload:", payload);
+      return postData(`/api/admin/orders/${params.id}/convert`, payload);
+    },
     onSuccess: () => {
       toast.success("✅ Berhasil Approve");
       router.push("/admin/proyek");
     },
-    onError: () => toast.error("❌ Gagal Approve"),
+    onError: (error) => {
+      const msg = (error as any)?.response?.data?.message || "Gagal Approve";
+      toast.error(`❌ ${msg}`);
+      console.error("convert error:", error);
+    },
   });
 
   const updateMutation = useMutation({
