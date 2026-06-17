@@ -28,7 +28,7 @@ export default function AdminDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead><tr className="border-b border-border"><th>No. Order</th><th>Nama</th><th>Kategori</th><th>Status</th></tr></thead>
-            <tbody>{(orders.data ?? []).slice(0, 5).map((order: any) => <tr key={order.id} className="border-b border-border"><td className="py-3">{order.order_number}</td><td>{order.customer_name}</td><td>{order.ai_category}</td><td><StatusBadge status={order.status} /></td></tr>)}</tbody>
+            <tbody>{(orders.data?.orders ?? []).slice(0, 5).map((order: any) => <tr key={order.id} className="border-b border-border"><td className="py-3">{order.order_number}</td><td>{order.customer_name}</td><td>{order.ai_category}</td><td><StatusBadge status={order.status} /></td></tr>)}</tbody>
           </table>
         </div>
       </div>

@@ -13,7 +13,7 @@ export default function AdminLaporanPage() {
   const orders = useQuery({ queryKey: ["orders"], queryFn: () => getData<any[]>("/api/admin/orders") });
 
   const revenue = useMemo(
-    () => (orders.data ?? []).filter((o) => o.status === "completed").reduce((sum, o) => sum + (o.agreed_price || 0), 0),
+    () => (orders.data?.orders ?? []).filter((o) => o.status === "completed").reduce((sum, o) => sum + (o.agreed_price || 0), 0),
     [orders.data],
   );
   const byStatus = useMemo(() => Object.entries((projects.data ?? []).reduce((acc: Record<string, number>, p) => ({ ...acc, [p.status]: (acc[p.status] || 0) + 1 }), {})).map(([name, value]) => ({ name, value })), [projects.data]);
@@ -24,8 +24,8 @@ export default function AdminLaporanPage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard title="Total Revenue" value={formatIDR(revenue)} icon={Wallet} />
         <StatsCard title="Total Project Selesai" value={(projects.data ?? []).filter((p) => p.status === "completed").length} icon={FolderOpen} />
-        <StatsCard title="Total Pesanan" value={(orders.data ?? []).length} icon={Package} />
-        <StatsCard title="Rata-rata Durasi" value={`${Math.round(((orders.data ?? []).filter((o) => o.status === "completed").reduce((sum, o) => sum + (o.agreed_duration || 0), 0) || 0) / Math.max((orders.data ?? []).filter((o) => o.status === "completed").length, 1))} minggu`} icon={Package} />
+        <StatsCard title="Total Pesanan" value={orders.data?.total ?? 0} icon={Package} />
+        <StatsCard title="Rata-rata Durasi" value={`${Math.round(((orders.data?.orders ?? []).filter((o) => o.status === "completed").reduce((sum, o) => sum + (o.agreed_duration || 0), 0) || 0) / Math.max((orders.data?.orders ?? []).filter((o) => o.status === "completed").length, 1))} minggu`} icon={Package} />
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-6">
@@ -40,7 +40,7 @@ export default function AdminLaporanPage() {
           <h2 className="mb-4 text-xl font-semibold">Orders per Month</h2>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={(orders.data ?? []).slice(-6).map((o) => ({ month: new Date(o.created_at).toLocaleDateString("id-ID", { month: "short" }), total: 1 }))}>
+              <BarChart data={(orders.data?.orders ?? []).slice(-6).map((o) => ({ month: new Date(o.created_at).toLocaleDateString("id-ID", { month: "short" }), total: 1 }))}>
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
