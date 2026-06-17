@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
@@ -10,11 +10,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { token } = useAuthStore();
+  const [hydrated, setHydrated] = useState(false);
   const isLogin = pathname === "/admin/login";
 
   useEffect(() => {
-    if (!isLogin && !token) router.push("/admin/login");
-  }, [isLogin, token, router]);
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true));
+    if (useAuthStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (hydrated && !isLogin && !token) router.push("/admin/login");
+  }, [hydrated, isLogin, token, router]);
+
+  if (!hydrated && !isLogin) return null;
 
   if (isLogin) return <>{children}</>;
 

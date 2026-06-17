@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import api from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
@@ -14,8 +15,13 @@ const schema = z.object({ email: z.string().email(), password: z.string().min(6)
 type FormData = z.infer<typeof schema>;
 
 export default function AdminLoginPage() {
+  const router = useRouter();
   const [show, setShow] = useState(false);
-  const { login } = useAuthStore();
+  const { token, login } = useAuthStore();
+
+  useEffect(() => {
+    if (token) router.push("/admin/dashboard");
+  }, [token, router]);
   const form = useForm<FormData>({ resolver: zodResolver(schema) });
   const mutation = useMutation({
     mutationFn: async (values: FormData) => (await api.post("/api/auth/login", values)).data.data,
