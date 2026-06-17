@@ -27,22 +27,24 @@ export default function AdminDetailPesananPage() {
 
   const convertMutation = useMutation({
     mutationFn: () => {
-      const payload = {
+      console.log("convert payload:", JSON.stringify({
         agreed_price: Number(price),
         agreed_duration: duration ? Number(duration) : undefined,
         admin_notes: notes || undefined,
-      };
-      console.log("convert payload:", payload);
-      return postData(`/api/admin/orders/${params.id}/convert`, payload);
+      }));
+      return postData(`/api/admin/orders/${params.id}/convert`, {
+        agreed_price: Number(price),
+        agreed_duration: duration ? Number(duration) : undefined,
+        admin_notes: notes || undefined,
+      });
     },
     onSuccess: () => {
       toast.success("✅ Berhasil Approve");
       router.push("/admin/proyek");
     },
-    onError: (error) => {
-      const msg = (error as any)?.response?.data?.message || "Gagal Approve";
-      toast.error(`❌ ${msg}`);
-      console.error("convert error:", error);
+    onError: (error: any) => {
+      console.log("convert error detail:", error.response?.data);
+      toast.error(error.response?.data?.message || "Gagal Approve");
     },
   });
 
