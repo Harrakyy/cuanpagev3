@@ -10,8 +10,9 @@ import { StatusBadge } from "@/components/common/status-badge";
 export default function AdminPesananPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
-  const { data = [] } = useQuery({ queryKey: ["admin-orders", status], queryFn: () => getData<any[]>(`/api/admin/orders?status=${status}&search=${search}`) });
-  const filtered = useMemo(() => data.filter((d) => d.order_number.toLowerCase().includes(search.toLowerCase()) || d.customer_name.toLowerCase().includes(search.toLowerCase())), [data, search]);
+  const { data } = useQuery({ queryKey: ["admin-orders", status], queryFn: () => getData<{ orders: any[]; total: number }>(`/api/admin/orders?status=${status}&search=${search}`) });
+  const orders = data?.orders ?? [];
+  const filtered = useMemo(() => orders.filter((d) => d.order_number.toLowerCase().includes(search.toLowerCase()) || d.customer_name.toLowerCase().includes(search.toLowerCase())), [orders, search]);
 
   return (
     <div className="space-y-4">
