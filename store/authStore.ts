@@ -17,7 +17,10 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       login: (token, user) => set({ token, user }),
-      logout: () => set({ token: null, user: null }),
+      logout: () => {
+        document.cookie = "token=; path=/; max-age=0";
+        set({ token: null, user: null });
+      },
     }),
     {
       name: "auth-storage",

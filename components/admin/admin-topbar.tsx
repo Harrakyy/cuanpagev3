@@ -14,7 +14,7 @@ export function AdminTopbar({ title }: { title: string }) {
         <div className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">{user?.name?.[0] ?? "A"}</div>
           <p className="text-sm">{user?.name ?? "Admin"}</p>
-          <button onClick={() => { logout(); localStorage.removeItem("auth-storage"); window.location.href = "/admin/login"; }}>
+          <button onClick={() => { logout(); localStorage.removeItem("auth-storage"); document.cookie = "token=; path=/; max-age=0"; window.location.href = "/admin/login"; }}>
             <ChevronDown className="h-4 w-4" />
           </button>
         </div>

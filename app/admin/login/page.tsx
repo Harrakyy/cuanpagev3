@@ -26,16 +26,15 @@ export default function AdminLoginPage() {
   const mutation = useMutation({
     mutationFn: async (values: FormData) => (await api.post("/api/auth/login", values)).data.data,
     onSuccess: (data) => {
-      login(data.token, data.user);
-      // Persist explicitly as required by spec; Zustand persist will also write this key.
+      login(data.access_token, data.user);
       localStorage.setItem(
         "auth-storage",
         JSON.stringify({
-          state: { token: data.token, user: data.user },
+          state: { token: data.access_token, user: data.user },
           version: 0,
         }),
       );
-      document.cookie = `token=${data.token}; path=/`;
+      document.cookie = `token=${data.access_token}; path=/; max-age=86400`;
       window.location.href = "/admin/dashboard";
     },
     onError: () => toast.error("Email atau password salah"),
