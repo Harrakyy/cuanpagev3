@@ -57,12 +57,14 @@ export default function KonsultasiPage() {
           ai_duration_weeks: analysis.duration_weeks,
           ai_complexity: analysis.complexity,
         })
-      ).data.data,
+      ).data,
     onSuccess: (data) => {
-      setTimeout(() => {
-        window.open(`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA}?text=${encodeURIComponent(data.whatsapp_message)}`, "_blank");
-      }, 1500);
-      window.location.href = `/tracking/${data.order_number}`;
+      console.log("WA number:", process.env.NEXT_PUBLIC_ADMIN_WA);
+      console.log("WA message:", data.data?.whatsapp_message);
+
+      const waUrl = `https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA}?text=${encodeURIComponent(data.data?.whatsapp_message ?? '')}`;
+      window.open(waUrl, "_blank");
+      window.location.href = `/tracking/${data.data?.order_number}`;
     },
   });
 
