@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import api from "@/lib/axios";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
 
@@ -26,10 +27,13 @@ export default function KonsultasiPage() {
   const form = useForm<FormData>({ resolver: zodResolver(schema), defaultValues: { customer_name: "", customer_phone: "", customer_email: "", customer_company: "" } });
 
   const analyze = useMutation({
-    mutationFn: async () => (await api.post("/api/analyze", { description })).data,
+    mutationFn: async () => (await api.post("/api/analyze", { description })).data.data,
     onSuccess: (data) => {
       setAnalysis(data);
       setStep(2);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Analisis gagal, coba lagi");
     },
   });
 
