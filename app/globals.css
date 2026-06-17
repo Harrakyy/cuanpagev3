@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 245 245 245;
+    --foreground: 10 10 10;
+    --card: 255 255 255;
+    --card-foreground: 10 10 10;
+    --border: 229 231 235;
+    --muted: 243 244 246;
+    --muted-foreground: 107 114 128;
+    --accent: 10 10 10;
+    --accent-foreground: 255 255 255;
+  }
+
+  .dark {
+    --background: 10 10 10;
+    --foreground: 245 245 245;
+    --card: 20 20 20;
+    --card-foreground: 245 245 245;
+    --border: 42 42 42;
+    --muted: 26 26 26;
+    --muted-foreground: 156 163 175;
+    --accent: 255 255 255;
+    --accent-foreground: 10 10 10;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply min-h-[100dvh] bg-background text-foreground;
+  }
+
+  body {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .container-default {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32;
+  }
+
+  .card-padding {
+    @apply p-6 md:p-8;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .delay-700 {
+    animation-delay: 700ms;
+  }
+
+  .delay-1400 {
+    animation-delay: 1400ms;
+  }
+
+  .delay-2100 {
+    animation-delay: 2100ms;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    animation: marquee 30s linear infinite reverse;
+  }
+}
