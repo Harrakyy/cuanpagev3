@@ -10,7 +10,7 @@ import { SkeletonTable } from "@/components/common/skeletons";
 
 export default function AdminDashboardPage() {
   const dashboard = useQuery({ queryKey: ["dashboard"], queryFn: () => getData<any>("/api/dashboard/me") });
-  const orders = useQuery({ queryKey: ["orders-pending"], queryFn: () => getData<any[]>("/api/admin/orders?status=pending") });
+  const orders = useQuery({ queryKey: ["orders-pending"], queryFn: () => getData<{ orders: any[]; total: number }>("/api/admin/orders?status=pending") });
   const tasks = useQuery({ queryKey: ["tasks"], queryFn: () => getData<any[]>("/api/tasks") });
 
   if (dashboard.isLoading || orders.isLoading || tasks.isLoading) return <SkeletonTable />;
@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard title="Total Proyek Aktif" value={dashboard.data?.active_projects ?? 0} icon={FolderOpen} />
         <StatsCard title="Task Selesai" value={(tasks.data ?? []).filter((t) => t.status === "done").length} icon={CheckCircle} />
-        <StatsCard title="Pesanan Pending" value={(orders.data ?? []).length} icon={Package} />
+        <StatsCard title="Pesanan Pending" value={orders.data?.total ?? 0} icon={Package} />
         <StatsCard title="Sprint Berjalan" value={dashboard.data?.active_sprint_count ?? 0} icon={Zap} />
       </div>
       <div className="rounded-2xl border border-border bg-card p-6">

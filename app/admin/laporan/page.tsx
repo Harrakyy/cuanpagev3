@@ -10,7 +10,7 @@ import { FolderOpen, Package, Wallet } from "lucide-react";
 
 export default function AdminLaporanPage() {
   const projects = useQuery({ queryKey: ["projects"], queryFn: () => getData<any[]>("/api/projects") });
-  const orders = useQuery({ queryKey: ["orders"], queryFn: () => getData<any[]>("/api/admin/orders") });
+  const orders = useQuery({ queryKey: ["orders"], queryFn: () => getData<{ orders: any[]; total: number }>("/api/admin/orders") });
 
   const revenue = useMemo(
     () => (orders.data?.orders ?? []).filter((o) => o.status === "completed").reduce((sum, o) => sum + (o.agreed_price || 0), 0),
