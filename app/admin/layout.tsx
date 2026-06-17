@@ -4,26 +4,30 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
-import { useAuthStore } from "@/store/authStore";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? match[1] : null;
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { token } = useAuthStore();
-  const [hydrated, setHydrated] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const isLogin = pathname === "/admin/login";
 
   useEffect(() => {
-    const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true));
-    if (useAuthStore.persist.hasHydrated()) setHydrated(true);
-    return unsub;
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (hydrated && !isLogin && !token) router.push("/admin/login");
-  }, [hydrated, isLogin, token, router]);
+    if (!mounted) return;
+    const hasToken = !!getCookie("token");
+    if (!isLogin && !hasToken) router.push("/admin/login");
+  }, [mounted, isLogin, router]);
 
-  if (!hydrated && !isLogin) return null;
+  if (!mounted && !isLogin) return null;
 
   if (isLogin) return <>{children}</>;
 

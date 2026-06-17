@@ -7,15 +7,17 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+function getTokenFromCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+  return match ? match[1] : null;
+}
+
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const raw = window.localStorage.getItem("auth-storage");
-    if (raw) {
-      const parsed = JSON.parse(raw) as { state?: { token?: string } };
-      const token = parsed?.state?.token;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = getTokenFromCookie();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
   }
   return config;
@@ -25,7 +27,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401 && typeof window !== "undefined") {
-      window.localStorage.removeItem("auth-storage");
+      document.cookie = "token=; path=/; max-age=0";
       window.location.href = "/admin/login";
     }
     return Promise.reject(error);

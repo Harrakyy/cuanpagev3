@@ -14,26 +14,26 @@ import { useAuthStore } from "@/store/authStore";
 const schema = z.object({ email: z.string().email(), password: z.string().min(6) });
 type FormData = z.infer<typeof schema>;
 
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? match[1] : null;
+}
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [show, setShow] = useState(false);
-  const { token, login } = useAuthStore();
+  const { login } = useAuthStore();
 
   useEffect(() => {
-    if (token) router.push("/admin/dashboard");
-  }, [token, router]);
+    const hasCookie = !!getCookie("token");
+    if (hasCookie) router.push("/admin/dashboard");
+  }, [router]);
   const form = useForm<FormData>({ resolver: zodResolver(schema) });
   const mutation = useMutation({
     mutationFn: async (values: FormData) => (await api.post("/api/auth/login", values)).data.data,
     onSuccess: (data) => {
       login(data.access_token, data.user);
-      localStorage.setItem(
-        "auth-storage",
-        JSON.stringify({
-          state: { token: data.access_token, user: data.user },
-          version: 0,
-        }),
-      );
       document.cookie = `token=${data.access_token}; path=/; max-age=86400`;
       window.location.href = "/admin/dashboard";
     },
