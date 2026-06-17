@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/common/status-badge";
 export default function AdminDetailProyekPage() {
   const params = useParams<{ id: string }>();
   const project = useQuery({ queryKey: ["project", params.id], queryFn: () => getData<any>(`/api/projects/${params.id}`) });
-  const sprints = useQuery({ queryKey: ["sprints"], queryFn: () => getData<any[]>("/api/sprints") });
+  const sprints = useQuery({ queryKey: ["sprints", params.id], queryFn: () => getData<any[]>(`/api/sprints?project_id=${params.id}`) });
   const backlog = useQuery({ queryKey: ["backlog", params.id], queryFn: () => getData<any[]>(`/api/projects/${params.id}/backlog`) });
   const members = useQuery({ queryKey: ["members", params.id], queryFn: () => getData<any[]>(`/api/projects/${params.id}/members`) });
 

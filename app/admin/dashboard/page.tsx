@@ -12,9 +12,8 @@ export default function AdminDashboardPage() {
   const dashboard = useQuery({ queryKey: ["dashboard"], queryFn: () => getData<any>("/api/dashboard/me") });
   const orders = useQuery({ queryKey: ["orders-pending"], queryFn: () => getData<any[]>("/api/admin/orders?status=pending") });
   const tasks = useQuery({ queryKey: ["tasks"], queryFn: () => getData<any[]>("/api/tasks") });
-  const sprints = useQuery({ queryKey: ["sprints"], queryFn: () => getData<any[]>("/api/sprints") });
 
-  if (dashboard.isLoading || orders.isLoading || tasks.isLoading || sprints.isLoading) return <SkeletonTable />;
+  if (dashboard.isLoading || orders.isLoading || tasks.isLoading) return <SkeletonTable />;
 
   return (
     <div className="space-y-6">
@@ -22,7 +21,7 @@ export default function AdminDashboardPage() {
         <StatsCard title="Total Proyek Aktif" value={dashboard.data?.active_projects ?? 0} icon={FolderOpen} />
         <StatsCard title="Task Selesai" value={(tasks.data ?? []).filter((t) => t.status === "done").length} icon={CheckCircle} />
         <StatsCard title="Pesanan Pending" value={(orders.data ?? []).length} icon={Package} />
-        <StatsCard title="Sprint Berjalan" value={(sprints.data ?? []).filter((s) => s.status === "active").length} icon={Zap} />
+        <StatsCard title="Sprint Berjalan" value={dashboard.data?.active_sprint_count ?? 0} icon={Zap} />
       </div>
       <div className="rounded-2xl border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between"><h2 className="text-xl font-semibold">Recent Orders</h2><Link href="/admin/pesanan" className="text-sm">Lihat Semua →</Link></div>
