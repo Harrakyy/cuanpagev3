@@ -19,6 +19,13 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+const formatRupiah = (amount: number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+
 export default function KonsultasiPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [description, setDescription] = useState("");
@@ -82,7 +89,7 @@ export default function KonsultasiPage() {
               <h2 className="mt-6 text-2xl font-bold">Hasil Analisis AI</h2>
               <p className="mt-3 inline-block rounded-full bg-muted px-3 py-1 text-sm font-semibold">{analysis?.category}</p>
               <p className="mt-4 text-sm">{analysis?.features?.join(", ")}</p>
-              <p className="mt-3 font-semibold">Estimasi: Rp {analysis?.price_min} - Rp {analysis?.price_max}</p>
+              <p className="mt-3 font-semibold">Estimasi: {formatRupiah(analysis?.price_min ?? 0)} - {formatRupiah(analysis?.price_max ?? 0)}</p>
               <button onClick={() => setStep(1)} className="mt-4 rounded-lg px-4 py-2 hover:bg-muted">← Ubah Kebutuhan</button>
             </div>
             <form onSubmit={form.handleSubmit((values) => order.mutate(values))} className="rounded-2xl border border-border bg-card p-6">
